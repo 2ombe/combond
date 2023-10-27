@@ -10,6 +10,7 @@ import CreateFranchiseTerm from "./screen/company/CreateFranchiseTerm";
 import FranchiseTermList from "./screen/company/FranchiseList";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Payment from "./screen/company/Payment";
 
 function App() {
   //we committed this
@@ -20,6 +21,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/company" element={<CompanyRegistration />} />
+        <Route path="/payment" element={<Payment />} />
         <Route path="/companylist" element={<Company />} />
         <Route path="/details" element={<FranchiseTermList />} />
         <Route path="/franchisee" element={<CreateFranchiseTerm />} />
