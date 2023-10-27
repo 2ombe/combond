@@ -27,7 +27,7 @@ function Payment() {
         // User is now connected to MetaMask.
         // You can add additional logic or redirect them to a wallet-specific page.
       } else {
-        console.error("MetaMask not detected. Please install MetaMask.");
+        toast.error("MetaMask not detected. Please install MetaMask.");
       }
     } catch (error) {
       console.error("MetaMask connection error:", error);
