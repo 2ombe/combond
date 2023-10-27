@@ -1,21 +1,26 @@
-import React, { useReducer, useState } from 'react';
-import axios from 'axios';
+import React, { useReducer, useState } from "react";
+import axios from "axios";
 import {
   Form,
   Button,
   FormGroup,
   FormLabel,
   FormControl,
-} from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+} from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const reducer = (action, state) => {
   switch (action.type) {
-    case 'UPLOAD_REQUEST':
-      return { ...state, loadingUpload: true, errorUpload: '' };
-    case 'UPLOAD_SUCCESS':
-      return { ...state, loadingUpload: action.payload, errorUpload: '' };
-    case 'UPLOAD_FAIL':
+    case "UPLOAD_REQUEST":
+      return { ...state, loadingUpload: true, errorUpload: "" };
+    case "UPLOAD_SUCCESS":
+      return {
+        ...state,
+        loadingUpload: false,
+        errorUpload: "",
+      };
+    case "UPLOAD_FAIL":
       return { ...state, loadingUpload: false, errorUpload: action.payload };
     default:
       return state;
@@ -25,32 +30,38 @@ const reducer = (action, state) => {
 const CompanyRegistration = () => {
   const navigate = useNavigate();
 
-  const [{ loading, errorUpload, loadingUpload }, dispatch] = useReducer(
-    reducer,
-    { loading: true, error: true }
-  );
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [category, setCategory] = useState('');
-  const [tin, setTin] = useState('');
+  const [{ loading, error, loadingUpdate }, dispatch] = useReducer(reducer, {
+    loading: true,
+    error: "",
+  });
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [category, setCategory] = useState("");
+  const [tin, setTin] = useState("");
   const [companyLogo, setCompanyLogo] = useState(null);
-  const [description, setDescrption] = useState('');
-  const [country, setCountry] = useState('');
-  const [city, setCity] = useState('');
-  const [streetAddress, setSteet] = useState('');
+  const [description, setDescrption] = useState("");
+  const [country, setCountry] = useState("");
+  const [city, setCity] = useState("");
+  const [streetAddress, setSteet] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Check if the companyLogo is set
+    if (!companyLogo) {
+      console.error("Company logo is required.");
+      return;
+    }
+
     try {
       const response = await axios.post(
-        '/api/companies',
+        "/api/companies",
         {
           name,
           email,
           category,
           description,
-          companyLogo,
+          companyLogo, // Use the companyLogo state here
           tin,
           country,
           city,
@@ -58,38 +69,41 @@ const CompanyRegistration = () => {
         },
         {
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
 
-      if (response.ok) {
-        const data = await response.json();
+      if (response.status === 201) {
+        const data = response.data;
         console.log(data);
-        navigate(`/company/${data._id}`);
+        navigate(`/company/${data.company._id}`);
       } else {
-        console.error('Company registration failed.');
+        console.error("Company registration failed.");
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
 
-  const handleUpload = async (e) => {
+  const uploadFileHandler = async (e) => {
     const file = e.target.files[0];
-    const bodyFormdata = new FormData();
-    bodyFormdata.append('file', file);
+    const bodyFormData = new FormData();
+    bodyFormData.append("file", file);
     try {
-      dispatch({ type: 'UPLOAD_REQUEST' });
-      const { data } = await axios.post('/api/upload', bodyFormdata, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      dispatch({ type: "UPLOAD_REQUEST" });
+      const { data } = await axios.post("/api/upload", bodyFormData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
-      dispatch({ type: 'UPLOAD_SUCCESS', payload: data });
-      console.log('logo uploaded successfully');
-      setCompanyLogo(data.secure_url);
-    } catch (error) {
-      console.log(error);
-      dispatch({ type: 'UPLOAD_FAIL', payload: 'erro uploading' });
+      dispatch({ type: "UPLOAD_SUCCESS" });
+
+      toast.success("Image uploaded successfully");
+      companyLogo(data.secure_url);
+    } catch (err) {
+      toast.error(err);
+      dispatch({ type: "UPLOAD_FAIL", payload: err });
     }
   };
 
@@ -180,10 +194,10 @@ const CompanyRegistration = () => {
             onChange={(e) => setSteet(e.target.value)}
           />
         </Form.Group>
-        <FormGroup controlId="logo">
-          <FormLabel>Add your company logo</FormLabel>
-          <FormControl type="file" name="companyLogo" onChange={handleUpload} />
-        </FormGroup>
+        <Form.Group className="mb-3" controlId="imageFile">
+          <Form.Label>Upload File</Form.Label>
+          <Form.Control type="file" onChange={uploadFileHandler} />
+        </Form.Group>
         <Button variant="primary" type="submit">
           Register
         </Button>

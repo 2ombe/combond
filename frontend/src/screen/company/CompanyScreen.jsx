@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Card } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { Container, Row, Col, Card } from "react-bootstrap";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
 const CompanyDetails = () => {
   const { id } = useParams();
@@ -16,10 +16,10 @@ const CompanyDetails = () => {
         if (response.status === 200) {
           setCompany(response.data.company);
         } else {
-          console.error('Failed to fetch company details');
+          console.error("Failed to fetch company details");
         }
       } catch (error) {
-        console.error('Error:', error);
+        console.error("Error:", error);
       }
     };
 
@@ -78,13 +78,13 @@ const CompanyDetails = () => {
                 <Row>
                   <Col>
                     <Card.Text>
-                      <strong>City:</strong> {company.city || 'N/A'}
+                      <strong>City:</strong> {company.city || "N/A"}
                     </Card.Text>
                   </Col>
                   <Col>
                     <Card.Text>
-                      <strong>Street Address:</strong>{' '}
-                      {company.streetAddress || 'N/A'}
+                      <strong>Street Address:</strong>{" "}
+                      {company.streetAddress || "N/A"}
                     </Card.Text>
                   </Col>
                 </Row>

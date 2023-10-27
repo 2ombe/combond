@@ -1,21 +1,22 @@
-import React from 'react';
-import { Button, Card, Col, Row } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Button, Card, Col, Row } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 
 function Company(props) {
+  const navigate = useNavigate();
   const { company } = props;
 
   const connectToMetaMask = async () => {
     try {
       if (window.ethereum) {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        await window.ethereum.request({ method: "eth_requestAccounts" });
         // User is now connected to MetaMask.
         // You can add additional logic or redirect them to a wallet-specific page.
       } else {
-        console.error('MetaMask not detected. Please install MetaMask.');
+        console.error("MetaMask not detected. Please install MetaMask.");
       }
     } catch (error) {
-      console.error('MetaMask connection error:', error);
+      console.error("MetaMask connection error:", error);
     }
   };
 
@@ -38,7 +39,7 @@ function Company(props) {
           </Col>
         </Row>
         <Card.Title>{company.category}</Card.Title>
-        <Button onClick={connectToMetaMask}>Connect</Button>
+        <Button onClick={() => navigate("/details")}>Check details</Button>
       </Card.Body>
     </Card>
   );
